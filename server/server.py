@@ -13,6 +13,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         route_request(self, "HEAD")
 
 if __name__ == "__main__":
-    server = HTTPServer(("localhost", 8000), RequestHandler)
+    server = HTTPServer(("0.0.0.0", 8000), RequestHandler)
     print("Server running at http://localhost:8000")
     server.serve_forever()
