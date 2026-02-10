@@ -1,0 +1,97 @@
+<head>
+    <title>Home - projects</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bd">
+    <div class="nav">
+        <div>
+        <h1 id="mp">My<br> Portfolio</h1>
+        </div>
+        <div>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/about">About</a> |
+            <a href="/projects">Projects</a> |
+            <a href="/contact">Contact</a>
+        </nav>
+        </div>
+    </div>
+<!-- <section class="projects bg-black" id="projects"> -->
+    
+    <!-- <div class="container"> -->
+        
+        <h2 class="project-title">Featured Projects</h2>
+        <p class="projects-sub">
+            Real-world systems engineered with performance and user experience in mind.
+        </p>
+
+        <div class="project-grid">
+            <div class="project-card">
+                <div class="card-inner">
+                    <span class="tag">Full Stack</span>
+                    <h3>Scrap Management System</h3>
+                    <p class="project-desc">
+                        A robust ecosystem connecting households with collectors. Features include pickup tracking, admin reports, and secure payment flows.
+                    </p>
+                    <ul class="feature-list">
+                        <li><span>✔</span> Role-based Dashboards</li>
+                        <li><span>✔</span> Real-time Assignment</li>
+                        <li><span>✔</span> Payment Analytics</li>
+                    </ul>
+                    <div class="project-actions">
+                        <button class="btn-fill" onclick="showDetails('scrap')">View Case</button>
+                        <button class="btn-outline">GitHub</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-inner">
+                    <span class="tag">Mobile</span>
+                    <h3>Scrap Connect App</h3>
+                    <p class="project-desc">
+                        A React Native solution for on-the-go waste management. Integrated with maps for optimized collector routing.
+                    </p>
+                    <ul class="feature-list">
+                        <li><span>✔</span> Map Integration</li>
+                        <li><span>✔</span> Push Notifications</li>
+                        <li><span>✔</span> Biometric Login</li>
+                    </ul>
+                    <div class="project-actions">
+                        <button class="btn-fill" onclick="showDetails('mobile')">View Case</button>
+                        <button class="btn-outline">GitHub</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-inner">
+                    <span class="tag">Analytics</span>
+                    <h3>Reporting Dashboard</h3>
+                    <p class="project-desc">
+                        Advanced data visualization tool providing insights into collection trends and environmental impact metrics.
+                    </p>
+                    <ul class="feature-list">
+                        <li><span>✔</span> D3.js Visualizations</li>
+                        <li><span>✔</span> CSV/PDF Export</li>
+                        <li><span>✔</span> Performance KPIs</li>
+                    </ul>
+                    <div class="project-actions">
+                        <button class="btn-fill" onclick="showDetails('dashboard')">View Case</button>
+                        <button class="btn-outline">GitHub</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- </section> -->
+
+<div id="projectModal" class="modal-overlay">
+    <div class="modal-box">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div id="modalContent"></div>
+        <div><a href="/">Back to Home</a></div>
+    </div>
+</div>
+<script src="/js/project.js"></script>
+</body>
