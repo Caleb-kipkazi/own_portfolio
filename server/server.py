@@ -9,6 +9,9 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         route_request(self, method="POST")
 
+    def do_HEAD(self):
+        route_request(self, "HEAD")
+
 if __name__ == "__main__":
     server = HTTPServer(("localhost", 8000), RequestHandler)
     print("Server running at http://localhost:8000")
