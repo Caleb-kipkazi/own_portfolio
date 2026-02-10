@@ -1,5 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from server.router import route_request
+import os
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -13,6 +14,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         route_request(self, "HEAD")
 
 if __name__ == "__main__":
-    server = HTTPServer(("0.0.0.0", 8000), RequestHandler)
-    print("Server running at http://localhost:8000")
+    # 🔴 THIS IS THE MOST IMPORTANT PART
+    PORT = int(os.environ.get("PORT", 8000))
+
+    server = HTTPServer(("0.0.0.0", PORT), RequestHandler)
+
+    print(f"Server running on port {PORT}")  # NOT localhost
     server.serve_forever()
