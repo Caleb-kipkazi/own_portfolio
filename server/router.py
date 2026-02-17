@@ -1,73 +1,102 @@
 import os
 import urllib.parse
+import mimetypes
 
+# Base directories
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 
+
 def route_request(handler, method):
     path = handler.path
-    print(f"DEBUG: Received {method} request for {path}") # Helps you debug in terminal
+    print(f"DEBUG: Received {method} request for {path}")
 
-    # --- GET METHOD ---
-    if method == "GET":
+    # Remove query parameters if present
+    path = path.split("?")[0]
+
+    # -------------------------
+    # GET / HEAD REQUESTS
+    # -------------------------
+    if method in ("GET", "HEAD"):
+        send_body = method == "GET"
+
         if path == "/":
-            serve_file(handler, "index.html")
+            serve_file(handler, "index.html", send_body)
+
         elif path == "/about":
-            serve_file(handler, "about.html")
+            serve_file(handler, "about.html", send_body)
+
         elif path == "/projects":
-            serve_file(handler, "projects.html")
+            serve_file(handler, "projects.html", send_body)
+
         elif path == "/contact":
-            serve_file(handler, "contact.html")
-        elif path.startswith("/css/") or path.startswith("/js/") or path.startswith("/assets/"):
-            serve_file(handler, path[1:])
+            serve_file(handler, "contact.html", send_body)
+
+        elif (
+            path.startswith("/css/")
+            or path.startswith("/js/")
+            or path.startswith("/assets/")
+        ):
+            serve_file(handler, path[1:], send_body)
+
         else:
             handler.send_error(404, "Page Not Found")
 
-    # --- POST METHOD ---
+    # -------------------------
+    # POST REQUESTS
+    # -------------------------
     elif method == "POST":
+
         if path == "/submit-contact":
-            # 1. Get data length
-            content_length = int(handler.headers['Content-Length'])
-            # 2. Read raw data
-            raw_data = handler.rfile.read(content_length).decode('utf-8')
-            # 3. Parse data
+            content_length = int(handler.headers.get("Content-Length", 0))
+            raw_data = handler.rfile.read(content_length).decode("utf-8")
             params = urllib.parse.parse_qs(raw_data)
-            
-            name = params.get('name', ['Guest'])[0]
-            
-            # --- RESPONSE ---
+
+            name = params.get("name", ["Guest"])[0]
+            email = params.get("email", [""])[0]
+            message = params.get("message", [""])[0]
+
+            print("New Contact Submission:")
+            print("Name:", name)
+            print("Email:", email)
+            print("Message:", message)
+
             handler.send_response(200)
             handler.send_header("Content-type", "text/plain")
             handler.end_headers()
-            
-            success_response = f"Success! Thank you {name}. I'll be in touch."
-            handler.wfile.write(success_response.encode('utf-8'))
+
+            response = f"Success! Thank you {name}. I'll be in touch."
+            handler.wfile.write(response.encode("utf-8"))
+
         else:
-            print(f"DEBUG: POST Path '{path}' not recognized")
             handler.send_error(404, "Post Path Not Found")
 
-def serve_file(handler, filename):
+    else:
+        handler.send_error(405, "Method Not Allowed")
+
+
+# ---------------------------------------------------
+# FILE SERVING FUNCTION (Handles ALL static files)
+# ---------------------------------------------------
+def serve_file(handler, filename, send_body=True):
     file_path = os.path.join(PUBLIC_DIR, filename)
 
-    if not os.path.exists(file_path):
-        handler.send_error(404)
+    if not os.path.exists(file_path) or not os.path.isfile(file_path):
+        handler.send_error(404, "File Not Found")
         return
 
-    # Proper MIME types are crucial for CSS/JS to work
-    if filename.endswith(".css"):
-        content_type = "text/css"
-    elif filename.endswith(".js"):
-        content_type = "application/javascript"
-    elif filename.endswith(".png"):
-        content_type = "image/png"
-    elif filename.endswith(".jpg"):
-        content_type = "image/jpeg"
-    else:
-        content_type = "text/html"
+    # Automatically detect content type
+    content_type, _ = mimetypes.guess_type(file_path)
+
+    if content_type is None:
+        content_type = "application/octet-stream"
 
     handler.send_response(200)
     handler.send_header("Content-type", content_type)
+    handler.send_header("Content-Length", str(os.path.getsize(file_path)))
     handler.end_headers()
 
-    with open(file_path, "rb") as f:
-        handler.wfile.write(f.read())
+    # Don't send body for HEAD requests
+    if send_body:
+        with open(file_path, "rb") as file:
+            handler.wfile.write(file.read())
